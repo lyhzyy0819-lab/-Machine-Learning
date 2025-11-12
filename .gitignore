@@ -19,7 +19,24 @@ ENV/
 # macOS
 .DS_Store
 
-# Models (optional - uncomment if models are too large)
-# *.pkl
-# *.h5
-# *.pth
+# Data files
+*.csv
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+
+# Models
+*.pkl
+*.h5
+*.pth
+*.pt
+*.ckpt
+*.model
+
+# Results and logs
+*.json
+*.log
