@@ -1,0 +1,27 @@
+# NYC Taxi Trip Duration Prediction - 项目依赖
+
+# 核心数据处理
+numpy>=1.24.0
+pandas>=2.0.0
+
+# 机器学习
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+scipy>=1.10.0
+
+# 可视化
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# 工具
+joblib>=1.3.0
+tqdm>=4.65.0
+
+# Jupyter支持（用于ipynb文件）
+jupyter>=1.0.0
+notebook>=7.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.1.0
+
+# 可选：Kaggle数据下载（如果使用Kaggle数据集）
+# kaggle>=1.5.0

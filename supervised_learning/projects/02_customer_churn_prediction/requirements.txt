@@ -1,0 +1,95 @@
+# 客户流失预测项目 - Python依赖包列表
+# 安装方法: pip install -r requirements.txt
+
+# ==================== 核心数据处理 ====================
+numpy>=1.24.0
+pandas>=2.0.0
+
+# ==================== 机器学习 ====================
+# Scikit-learn - 核心机器学习库
+scikit-learn>=1.3.0
+
+# XGBoost - 梯度提升树
+xgboost>=2.0.0
+
+# LightGBM - 微软梯度提升框架
+lightgbm>=4.0.0
+
+# 类别不平衡处理
+imbalanced-learn>=0.11.0
+
+# 科学计算
+scipy>=1.10.0
+
+# ==================== 数据可视化 ====================
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# ==================== 工具库 ====================
+# 模型序列化
+joblib>=1.3.0
+
+# 进度条
+tqdm>=4.65.0
+
+# ==================== Jupyter支持 ====================
+# 如果需要使用Jupyter Notebook
+jupyter>=1.0.0
+notebook>=7.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.1.0
+
+# ==================== 可选：数据获取 ====================
+# 如果需要从网络下载数据
+requests>=2.31.0
+
+# ==================== 版本说明 ====================
+# numpy: 数值计算基础库，支持多维数组和矩阵运算
+# pandas: 数据处理和分析，提供DataFrame数据结构
+# scikit-learn: 包含分类、回归、聚类等算法
+# xgboost: 高性能梯度提升算法
+# lightgbm: 快速、分布式、高性能梯度提升框架
+# imbalanced-learn: 处理类别不平衡数据（SMOTE等）
+# matplotlib: Python基础绘图库
+# seaborn: 基于matplotlib的统计数据可视化
+# joblib: 高效的Python对象持久化
+# tqdm: 进度条显示
+
+# ==================== 安装建议 ====================
+# 1. 基础安装（最小依赖）:
+#    pip install numpy pandas scikit-learn matplotlib seaborn joblib
+#
+# 2. 完整安装（包括高级算法）:
+#    pip install -r requirements.txt
+#
+# 3. 不安装Jupyter（如果只需要运行脚本）:
+#    pip install numpy pandas scikit-learn xgboost lightgbm imbalanced-learn matplotlib seaborn joblib tqdm
+#
+# 4. 使用conda安装（推荐，避免兼容性问题）:
+#    conda create -n churn_prediction python=3.10
+#    conda activate churn_prediction
+#    pip install -r requirements.txt
+#
+# 5. 在虚拟环境中安装（推荐）:
+#    python -m venv venv
+#    source venv/bin/activate  # Linux/Mac
+#    # 或 venv\Scripts\activate  # Windows
+#    pip install -r requirements.txt
+
+# ==================== 版本兼容性 ====================
+# Python版本: 3.8 或更高
+# 推荐使用: Python 3.10 或 3.11
+
+# ==================== 常见问题 ====================
+# 1. 如果安装xgboost或lightgbm失败:
+#    - Windows: 下载预编译的wheel文件
+#    - Mac M1/M2: 使用conda安装
+#    - Linux: 确保安装了gcc编译器
+#
+# 2. 如果imbalanced-learn安装失败:
+#    pip install --upgrade pip setuptools
+#    pip install imbalanced-learn
+#
+# 3. 内存不足:
+#    - 使用sample参数处理小批量数据
+#    - 考虑使用dask处理大数据集

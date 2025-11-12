@@ -1,0 +1,839 @@
+2025-11-12 19:17:15 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:17:15 - NYC_Taxi - INFO -                     NYC出租车行程时长预测系统
+2025-11-12 19:17:15 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 开始 完整流程...
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 阶段 1/7: 数据加载
+2025-11-12 19:17:15 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:17:15 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 加载训练数据
+2025-11-12 19:17:15 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 开始 加载数据: nyc_taxi_train.csv...
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 数据加载成功: 5000 行 × 11 列
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 加载数据: nyc_taxi_train.csv 完成，耗时: 0.01秒
+2025-11-12 19:17:15 - NYC_Taxi - INFO - 完整流程 完成，耗时: 0.01秒
+2025-11-12 19:17:15 - NYC_Taxi - ERROR - 
+执行过程中出现错误: '>' not supported between instances of 'Timestamp' and 'numpy.float16'
+Traceback (most recent call last):
+  File "main.py", line 71, in main
+    df = load_train_data(use_sample=use_sample, sample_size=sample_size)
+  File "/Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/src/data_loader.py", line 214, in load_train_data
+    df = load_data_from_csv(
+  File "/Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/src/data_loader.py", line 190, in load_data_from_csv
+    df = reduce_mem_usage(df, verbose=True)
+  File "/Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/src/utils.py", line 262, in reduce_mem_usage
+    if c_min > np.finfo(np.float16).min and c_max < np.finfo(np.float16).max:
+TypeError: '>' not supported between instances of 'Timestamp' and 'numpy.float16'
+2025-11-12 19:18:14 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:18:14 - NYC_Taxi - INFO -                     NYC出租车行程时长预测系统
+2025-11-12 19:18:14 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 开始 完整流程...
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 阶段 1/7: 数据加载
+2025-11-12 19:18:14 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:18:14 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 加载训练数据
+2025-11-12 19:18:14 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 开始 加载数据: nyc_taxi_train.csv...
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 数据加载成功: 5000 行 × 11 列
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 加载数据: nyc_taxi_train.csv 完成，耗时: 0.01秒
+2025-11-12 19:18:14 - NYC_Taxi - INFO - 完整流程 完成，耗时: 0.01秒
+2025-11-12 19:18:14 - NYC_Taxi - ERROR - 
+执行过程中出现错误: Categorical is not ordered for operation min
+you can use .as_ordered() to change the Categorical to an ordered one
+Traceback (most recent call last):
+  File "main.py", line 71, in main
+    df = load_train_data(use_sample=use_sample, sample_size=sample_size)
+  File "/Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/src/data_loader.py", line 214, in load_train_data
+    df = load_data_from_csv(
+  File "/Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/src/data_loader.py", line 190, in load_data_from_csv
+    df = reduce_mem_usage(df, verbose=True)
+  File "/Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/src/utils.py", line 252, in reduce_mem_usage
+    c_min = df[col].min()
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/generic.py", line 11669, in min
+    return NDFrame.min(self, axis, skipna, numeric_only, **kwargs)
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/generic.py", line 11169, in min
+    return self._stat_function(
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/generic.py", line 11158, in _stat_function
+    return self._reduce(
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/series.py", line 4656, in _reduce
+    return delegate._reduce(name, skipna=skipna, **kwds)
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/arrays/base.py", line 1444, in _reduce
+    return meth(skipna=skipna, **kwargs)
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/arrays/categorical.py", line 2005, in min
+    self.check_for_ordered("min")
+  File "/Users/lyh/miniconda3/envs/ml_env/lib/python3.8/site-packages/pandas/core/arrays/categorical.py", line 1553, in check_for_ordered
+    raise TypeError(
+TypeError: Categorical is not ordered for operation min
+you can use .as_ordered() to change the Categorical to an ordered one
+
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO -                     NYC出租车行程时长预测系统
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 开始 完整流程...
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 阶段 1/7: 数据加载
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 加载训练数据
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 开始 加载数据: nyc_taxi_train.csv...
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 数据加载成功: 5000 行 × 11 列
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 内存使用从 0.24 MB 减少到 0.22 MB (减少 7.8%)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 加载数据: nyc_taxi_train.csv 完成，耗时: 0.01秒
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 训练数据 基本信息
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 形状: 5000 行 × 11 列
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 内存使用: 0.50 MB
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+数据类型分布:
+2025-11-12 19:19:03 - NYC_Taxi - INFO - float32           4
+int8              2
+datetime64[ns]    2
+object            1
+category          1
+int32             1
+Name: count, dtype: int64
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+无缺失值
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+数据加载完成:
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   样本数量: 5,000
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   特征数量: 11
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 阶段 2/7: 数据预处理
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 开始数据预处理
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 输入数据形状: (5000, 11)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 开始 数据预处理...
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 转换数据类型...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   'vendor_id' 转换为 category
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   'store_and_fwd_flag' 转换为 category
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   'passenger_count' 转换为 int8
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 检查重复数据...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   无重复数据
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 处理缺失值...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   无缺失值
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 根据边界条件过滤数据...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   过滤地理坐标...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -     移除 4 行超出NYC范围的数据
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   过滤行程时长...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -     移除 43 行异常行程时长
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   过滤乘客数量...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -     移除 0 行异常乘客数量
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 总共过滤 47 行数据 (0.94%)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 移除异常值...
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   列 'trip_duration': 移除 59 个异常值 (1.19%)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 总共移除 59 行异常值 (1.19%)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+预处理完成！
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 输出数据形状: (4894, 11)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 保留比例: 97.88%
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 数据预处理 完成，耗时: 0.01秒
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+数据预处理完成:
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   清洗后样本数: 4,894
+2025-11-12 19:19:03 - NYC_Taxi - INFO -   数据保留率: 97.88%
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 阶段 3/7: 探索性数据分析 (EDA)
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 创建可视化报告
+2025-11-12 19:19:03 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 开始 可视化报告生成...
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 绘制数据分布图: trip_duration分布
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/trip_duration_distribution.png
+2025-11-12 19:19:03 - NYC_Taxi - INFO - 绘制数据分布图: 数值特征分布_batch1
+2025-11-12 19:19:04 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/numeric_features_batch1.png
+2025-11-12 19:19:04 - NYC_Taxi - INFO - 绘制相关性热力图: 特征相关性分析
+2025-11-12 19:19:04 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/correlation_heatmap.png
+2025-11-12 19:19:04 - NYC_Taxi - INFO - 绘制地理散点图: 起点地理位置分布
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/pickup_geo_distribution.png
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 绘制地理散点图: 终点地理位置分布
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/dropoff_geo_distribution.png
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 绘制时间序列图: 每日平均行程时长
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/daily_avg_duration.png
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 绘制时间序列图: 每小时行程数量
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda/hourly_trip_count.png
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 可视化报告已生成，保存至: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/eda
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 可视化报告生成 完成，耗时: 2.46秒
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+EDA可视化报告已生成
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 阶段 4/7: 特征工程
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 开始特征工程
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 开始 特征工程...
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 从 'pickup_datetime' 提取时间特征...
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   提取基础时间特征: year, month, day, weekday, hour
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   创建周末标记: is_weekend
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   创建高峰时段标记: is_rush_hour
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   创建深夜标记: is_night
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 创建地理特征...
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   计算曼哈顿距离: manhattan_distance
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   计算欧氏距离: euclidean_distance
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   计算方位角: bearing
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   计算中心坐标: center_latitude, center_longitude
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 创建交互特征...
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   创建特征: distance_per_passenger
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   创建特征: distance_rush_hour
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   创建特征: hour_distance
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+特征工程完成！
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 最终特征数量: 27
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 特征工程 完成，耗时: 0.00秒
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+特征工程完成:
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   总特征数: 27
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 选择 18 个特征用于建模
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   建模特征数: 18
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   目标变量: trip_duration
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 阶段 5/7: 模型训练
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 准备训练数据
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 训练集大小: (3915, 18)
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 测试集大小: (979, 18)
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 执行特征缩放...
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 特征缩放完成
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 开始训练所有模型
+2025-11-12 19:19:05 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+训练线性回归模型...
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 开始 线性回归训练...
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+LinearRegression 评估结果:
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   R² Score: 0.5704
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   RMSE: 364.46 秒
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   MAE: 263.88 秒
+2025-11-12 19:19:05 - NYC_Taxi - INFO -   MAPE: 47.07%
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 线性回归训练 完成，耗时: 0.00秒
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 
+训练Ridge回归模型...
+2025-11-12 19:19:05 - NYC_Taxi - INFO - 开始 Ridge回归训练...
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 最佳alpha: 0.1
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 
+Ridge 评估结果:
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   R² Score: 0.5702
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   RMSE: 364.54 秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   MAE: 263.82 秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   MAPE: 47.07%
+2025-11-12 19:19:07 - NYC_Taxi - INFO - Ridge回归训练 完成，耗时: 1.30秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 
+训练Lasso回归模型...
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 开始 Lasso回归训练...
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 最佳alpha: 0.1
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 
+Lasso 评估结果:
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   R² Score: 0.5704
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   RMSE: 364.45 秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   MAE: 263.77 秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   MAPE: 47.08%
+2025-11-12 19:19:07 - NYC_Taxi - INFO - Lasso回归训练 完成，耗时: 0.04秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 
+训练ElasticNet模型...
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 开始 ElasticNet训练...
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 最佳参数: {'alpha': 0.1, 'l1_ratio': 0.9}
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 
+ElasticNet 评估结果:
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   R² Score: 0.5670
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   RMSE: 365.90 秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   MAE: 264.07 秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO -   MAPE: 47.59%
+2025-11-12 19:19:07 - NYC_Taxi - INFO - ElasticNet训练 完成，耗时: 0.04秒
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 
+训练随机森林模型...
+2025-11-12 19:19:07 - NYC_Taxi - INFO - 开始 随机森林训练...
+2025-11-12 19:19:12 - NYC_Taxi - INFO - 最佳参数: {'max_depth': 20, 'min_samples_leaf': 2, 'min_samples_split': 5, 'n_estimators': 200}
+2025-11-12 19:19:12 - NYC_Taxi - INFO - 
+RandomForest 评估结果:
+2025-11-12 19:19:12 - NYC_Taxi - INFO -   R² Score: 0.7167
+2025-11-12 19:19:12 - NYC_Taxi - INFO -   RMSE: 295.98 秒
+2025-11-12 19:19:12 - NYC_Taxi - INFO -   MAE: 208.26 秒
+2025-11-12 19:19:12 - NYC_Taxi - INFO -   MAPE: 33.67%
+2025-11-12 19:19:12 - NYC_Taxi - INFO - 随机森林训练 完成，耗时: 5.23秒
+2025-11-12 19:19:12 - NYC_Taxi - INFO - 
+训练XGBoost模型...
+2025-11-12 19:19:12 - NYC_Taxi - INFO - 开始 XGBoost训练...
+2025-11-12 19:19:13 - NYC_Taxi - INFO - 最佳参数: {'subsample': 1.0, 'n_estimators': 300, 'max_depth': 3, 'learning_rate': 0.1, 'colsample_bytree': 1.0}
+2025-11-12 19:19:13 - NYC_Taxi - INFO - 
+XGBoost 评估结果:
+2025-11-12 19:19:13 - NYC_Taxi - INFO -   R² Score: 0.7409
+2025-11-12 19:19:13 - NYC_Taxi - INFO -   RMSE: 283.05 秒
+2025-11-12 19:19:13 - NYC_Taxi - INFO -   MAE: 201.29 秒
+2025-11-12 19:19:13 - NYC_Taxi - INFO -   MAPE: 31.24%
+2025-11-12 19:19:13 - NYC_Taxi - INFO - XGBoost训练 完成，耗时: 1.19秒
+2025-11-12 19:19:13 - NYC_Taxi - INFO - 
+训练Stacking集成模型...
+2025-11-12 19:19:13 - NYC_Taxi - INFO - 开始 Stacking模型训练...
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+Stacking 评估结果:
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   R² Score: 0.7411
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   RMSE: 282.93 秒
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAE: 199.20 秒
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAPE: 30.62%
+2025-11-12 19:19:17 - NYC_Taxi - INFO - Stacking模型训练 完成，耗时: 3.33秒
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 所有模型训练完成！
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 最佳模型: Stacking (R² = 0.7411)
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+--------------------------------------------------------------------------------
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 模型性能对比
+2025-11-12 19:19:17 - NYC_Taxi - INFO - --------------------------------------------------------------------------------
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 模型已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/best_model.pkl
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 模型已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/scaler.pkl
+2025-11-12 19:19:17 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/metadata.json
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+最佳模型已保存:
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   模型: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/best_model.pkl
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   缩放器: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/scaler.pkl
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   元数据: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/metadata.json
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 阶段 6/7: 模型评估
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 评估所有模型
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 评估模型: LinearRegression
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 生成 LinearRegression 评估报告
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 计算 LinearRegression (训练集) 的评估指标...
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   R² Score: 0.6001
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   RMSE: 338.49 秒 (5.64 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAE: 248.74 秒 (4.15 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAPE: 46.94%
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 计算 LinearRegression (测试集) 的评估指标...
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   R² Score: 0.5704
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   RMSE: 364.46 秒 (6.07 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAE: 263.88 秒 (4.40 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAPE: 47.07%
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 执行 LinearRegression 的残差分析...
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   残差均值: 18.53
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   残差标准差: 363.98
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   异常残差数量: 21 (2.15%)
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 绘制残差分析图: LinearRegression_残差分析
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/LinearRegression_residuals.png
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 绘制预测对比图: LinearRegression_预测对比
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/LinearRegression_predictions.png
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 分析 LinearRegression 的特征重要性...
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+Top 18 重要特征:
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   1. passenger_count: 5971998.0000
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   2. passenger_count: 5971991.5000
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   3. euclidean_distance: 767.3447
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   4. manhattan_distance: 411.6514
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   5. is_night: 80.2726
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   6. center_longitude: 48.8112
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   7. is_weekend: 48.6669
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   8. hour: 42.9516
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   9. hour_distance: 40.9902
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   10. distance_rush_hour: 31.5753
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   11. distance_per_passenger: 27.5591
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   12. weekday: 24.6909
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   13. month: 23.8974
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   14. is_rush_hour: 18.9472
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   15. day: 11.8840
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   16. bearing: 7.2449
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   17. center_latitude: 6.3641
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   18. year: 0.0000
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 绘制特征重要性图: LinearRegression_特征重要性
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/LinearRegression_feature_importance.png
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.84秒
+2025-11-12 19:19:17 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/LinearRegression_evaluation_report.json
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/LinearRegression_evaluation_report.json
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 评估模型: Ridge
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 生成 Ridge 评估报告
+2025-11-12 19:19:17 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 计算 Ridge (训练集) 的评估指标...
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   R² Score: 0.6002
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   RMSE: 338.48 秒 (5.64 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAE: 248.75 秒 (4.15 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAPE: 46.94%
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 计算 Ridge (测试集) 的评估指标...
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   R² Score: 0.5702
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   RMSE: 364.54 秒 (6.08 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAE: 263.82 秒 (4.40 分钟)
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   MAPE: 47.07%
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 执行 Ridge 的残差分析...
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   残差均值: 18.48
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   残差标准差: 364.07
+2025-11-12 19:19:17 - NYC_Taxi - INFO -   异常残差数量: 21 (2.15%)
+2025-11-12 19:19:17 - NYC_Taxi - INFO - 绘制残差分析图: Ridge_残差分析
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/Ridge_residuals.png
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 绘制预测对比图: Ridge_预测对比
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Ridge_predictions.png
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 分析 Ridge 的特征重要性...
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 
+Top 18 重要特征:
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   1. euclidean_distance: 760.9396
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   2. manhattan_distance: 409.1185
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   3. is_night: 79.8496
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   4. center_longitude: 49.0902
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   5. is_weekend: 49.0615
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   6. hour: 42.9884
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   7. hour_distance: 40.9348
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   8. distance_per_passenger: 32.0078
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   9. distance_rush_hour: 31.6293
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   10. weekday: 24.5685
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   11. month: 24.0050
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   12. is_rush_hour: 18.5306
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   13. day: 11.7457
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   14. bearing: 7.4345
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   15. center_latitude: 6.2483
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   16. passenger_count: 5.0520
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   17. passenger_count: 5.0420
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   18. year: 0.0000
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 绘制特征重要性图: Ridge_特征重要性
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/Ridge_feature_importance.png
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.85秒
+2025-11-12 19:19:18 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Ridge_evaluation_report.json
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Ridge_evaluation_report.json
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 评估模型: Lasso
+2025-11-12 19:19:18 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:18 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 生成 Lasso 评估报告
+2025-11-12 19:19:18 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 计算 Lasso (训练集) 的评估指标...
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   R² Score: 0.6002
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   RMSE: 338.48 秒 (5.64 分钟)
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   MAE: 248.77 秒 (4.15 分钟)
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   MAPE: 46.97%
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 计算 Lasso (测试集) 的评估指标...
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   R² Score: 0.5704
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   RMSE: 364.45 秒 (6.07 分钟)
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   MAE: 263.77 秒 (4.40 分钟)
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   MAPE: 47.08%
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 执行 Lasso 的残差分析...
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   残差均值: 18.48
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   残差标准差: 363.98
+2025-11-12 19:19:18 - NYC_Taxi - INFO -   异常残差数量: 20 (2.04%)
+2025-11-12 19:19:18 - NYC_Taxi - INFO - 绘制残差分析图: Lasso_残差分析
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/Lasso_residuals.png
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 绘制预测对比图: Lasso_预测对比
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Lasso_predictions.png
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 分析 Lasso 的特征重要性...
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 
+Top 18 重要特征:
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   1. euclidean_distance: 751.9507
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   2. manhattan_distance: 399.3522
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   3. is_night: 79.3586
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   4. center_longitude: 49.2632
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   5. is_weekend: 48.6784
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   6. hour: 42.4272
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   7. hour_distance: 40.5712
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   8. distance_per_passenger: 31.7252
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   9. distance_rush_hour: 31.3216
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   10. weekday: 24.1395
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   11. month: 23.9125
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   12. is_rush_hour: 18.1716
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   13. day: 11.6214
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   14. passenger_count: 9.8935
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   15. bearing: 7.3319
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   16. center_latitude: 6.1100
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   17. year: 0.0000
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   18. passenger_count: 0.0000
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 绘制特征重要性图: Lasso_特征重要性
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/Lasso_feature_importance.png
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.86秒
+2025-11-12 19:19:19 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Lasso_evaluation_report.json
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Lasso_evaluation_report.json
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 评估模型: ElasticNet
+2025-11-12 19:19:19 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:19 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 生成 ElasticNet 评估报告
+2025-11-12 19:19:19 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 计算 ElasticNet (训练集) 的评估指标...
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   R² Score: 0.5939
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   RMSE: 341.11 秒 (5.69 分钟)
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   MAE: 251.29 秒 (4.19 分钟)
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   MAPE: 47.87%
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 计算 ElasticNet (测试集) 的评估指标...
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   R² Score: 0.5670
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   RMSE: 365.90 秒 (6.10 分钟)
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   MAE: 264.07 秒 (4.40 分钟)
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   MAPE: 47.59%
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 执行 ElasticNet 的残差分析...
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   残差均值: 18.51
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   残差标准差: 365.43
+2025-11-12 19:19:19 - NYC_Taxi - INFO -   异常残差数量: 21 (2.15%)
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 绘制残差分析图: ElasticNet_残差分析
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/ElasticNet_residuals.png
+2025-11-12 19:19:19 - NYC_Taxi - INFO - 绘制预测对比图: ElasticNet_预测对比
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/ElasticNet_predictions.png
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 分析 ElasticNet 的特征重要性...
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 
+Top 18 重要特征:
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   1. euclidean_distance: 424.5532
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   2. manhattan_distance: 103.4058
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   3. is_night: 71.9597
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   4. distance_per_passenger: 55.2585
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   5. hour_distance: 54.9798
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   6. center_longitude: 54.7972
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   7. is_weekend: 48.7554
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   8. hour: 43.4848
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   9. distance_rush_hour: 30.6169
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   10. month: 24.2606
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   11. weekday: 23.4757
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   12. is_rush_hour: 17.2977
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   13. day: 11.2063
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   14. passenger_count: 8.8302
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   15. passenger_count: 8.5460
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   16. bearing: 6.2255
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   17. center_latitude: 5.8877
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   18. year: 0.0000
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 绘制特征重要性图: ElasticNet_特征重要性
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/ElasticNet_feature_importance.png
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.83秒
+2025-11-12 19:19:20 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/ElasticNet_evaluation_report.json
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/ElasticNet_evaluation_report.json
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 评估模型: RandomForest
+2025-11-12 19:19:20 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:20 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 生成 RandomForest 评估报告
+2025-11-12 19:19:20 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 计算 RandomForest (训练集) 的评估指标...
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   R² Score: 0.9372
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   RMSE: 134.18 秒 (2.24 分钟)
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   MAE: 91.33 秒 (1.52 分钟)
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   MAPE: 15.12%
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 计算 RandomForest (测试集) 的评估指标...
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   R² Score: 0.7167
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   RMSE: 295.98 秒 (4.93 分钟)
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   MAE: 208.26 秒 (3.47 分钟)
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   MAPE: 33.67%
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 执行 RandomForest 的残差分析...
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   残差均值: 2.79
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   残差标准差: 295.97
+2025-11-12 19:19:20 - NYC_Taxi - INFO -   异常残差数量: 20 (2.04%)
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 绘制残差分析图: RandomForest_残差分析
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/RandomForest_residuals.png
+2025-11-12 19:19:20 - NYC_Taxi - INFO - 绘制预测对比图: RandomForest_预测对比
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/RandomForest_predictions.png
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 分析 RandomForest 的特征重要性...
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 
+Top 18 重要特征:
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   1. euclidean_distance: 0.6511
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   2. manhattan_distance: 0.0513
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   3. bearing: 0.0502
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   4. hour_distance: 0.0478
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   5. center_latitude: 0.0411
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   6. hour: 0.0368
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   7. center_longitude: 0.0343
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   8. distance_per_passenger: 0.0212
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   9. day: 0.0186
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   10. weekday: 0.0179
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   11. month: 0.0125
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   12. distance_rush_hour: 0.0079
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   13. is_weekend: 0.0051
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   14. passenger_count: 0.0014
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   15. passenger_count: 0.0014
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   16. is_rush_hour: 0.0008
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   17. is_night: 0.0005
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   18. year: 0.0000
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 绘制特征重要性图: RandomForest_特征重要性
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/RandomForest_feature_importance.png
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.98秒
+2025-11-12 19:19:21 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/RandomForest_evaluation_report.json
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/RandomForest_evaluation_report.json
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 评估模型: XGBoost
+2025-11-12 19:19:21 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:21 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 生成 XGBoost 评估报告
+2025-11-12 19:19:21 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 计算 XGBoost (训练集) 的评估指标...
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   R² Score: 0.8464
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   RMSE: 209.81 秒 (3.50 分钟)
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   MAE: 152.96 秒 (2.55 分钟)
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   MAPE: 25.49%
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 计算 XGBoost (测试集) 的评估指标...
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   R² Score: 0.7409
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   RMSE: 283.05 秒 (4.72 分钟)
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   MAE: 201.29 秒 (3.35 分钟)
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   MAPE: 31.24%
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 执行 XGBoost 的残差分析...
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   残差均值: 8.64
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   残差标准差: 282.92
+2025-11-12 19:19:21 - NYC_Taxi - INFO -   异常残差数量: 17 (1.74%)
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 绘制残差分析图: XGBoost_残差分析
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/XGBoost_residuals.png
+2025-11-12 19:19:21 - NYC_Taxi - INFO - 绘制预测对比图: XGBoost_预测对比
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/XGBoost_predictions.png
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 分析 XGBoost 的特征重要性...
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+Top 18 重要特征:
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   1. euclidean_distance: 0.7124
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   2. hour: 0.0531
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   3. hour_distance: 0.0412
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   4. weekday: 0.0282
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   5. bearing: 0.0269
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   6. manhattan_distance: 0.0263
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   7. center_latitude: 0.0225
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   8. center_longitude: 0.0183
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   9. distance_per_passenger: 0.0177
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   10. distance_rush_hour: 0.0158
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   11. month: 0.0127
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   12. passenger_count: 0.0092
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   13. day: 0.0090
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   14. is_rush_hour: 0.0067
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   15. year: 0.0000
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   16. is_night: 0.0000
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   17. is_weekend: 0.0000
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   18. passenger_count: 0.0000
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 绘制特征重要性图: XGBoost_特征重要性
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/XGBoost_feature_importance.png
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.88秒
+2025-11-12 19:19:22 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/XGBoost_evaluation_report.json
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/XGBoost_evaluation_report.json
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 评估模型: Stacking
+2025-11-12 19:19:22 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 生成 Stacking 评估报告
+2025-11-12 19:19:22 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 开始 评估报告生成...
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+训练集评估:
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 计算 Stacking (训练集) 的评估指标...
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   R² Score: 0.8803
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   RMSE: 185.23 秒 (3.09 分钟)
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   MAE: 132.29 秒 (2.20 分钟)
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   MAPE: 21.43%
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+测试集评估:
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 计算 Stacking (测试集) 的评估指标...
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   R² Score: 0.7411
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   RMSE: 282.93 秒 (4.72 分钟)
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   MAE: 199.20 秒 (3.32 分钟)
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   MAPE: 30.62%
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+残差分析:
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 执行 Stacking 的残差分析...
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   残差均值: 12.36
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   残差标准差: 282.66
+2025-11-12 19:19:22 - NYC_Taxi - INFO -   异常残差数量: 17 (1.74%)
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 绘制残差分析图: Stacking_残差分析
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/Stacking_residuals.png
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 绘制预测对比图: Stacking_预测对比
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Stacking_predictions.png
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 分析 Stacking 的特征重要性...
+2025-11-12 19:19:22 - NYC_Taxi - WARNING - Stacking 不支持特征重要性分析
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 评估报告生成 完成，耗时: 0.62秒
+2025-11-12 19:19:22 - NYC_Taxi - INFO - JSON数据已保存到: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Stacking_evaluation_report.json
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+评估报告已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/evaluation/Stacking_evaluation_report.json
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 所有模型对比
+2025-11-12 19:19:22 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 模型性能对比
+2025-11-12 19:19:22 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 
+              模型     R²     RMSE      MAE    MAPE
+        Stacking 0.7411 282.9313 199.1998 30.6151
+         XGBoost 0.7409 283.0516 201.2887 31.2435
+    RandomForest 0.7167 295.9847 208.2580 33.6655
+           Lasso 0.5704 364.4491 263.7740 47.0782
+LinearRegression 0.5704 364.4557 263.8803 47.0739
+           Ridge 0.5702 364.5399 263.8248 47.0656
+      ElasticNet 0.5670 365.9029 264.0708 47.5931
+2025-11-12 19:19:22 - NYC_Taxi - INFO - 绘制模型对比图: rmse
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/model_comparison.png
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+对比结果已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/model_comparison.csv
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+模型评估完成
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 阶段 7/7: 结果总结
+2025-11-12 19:19:23 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+最佳模型: Stacking
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+性能指标:
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   R² Score: 0.7411
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   RMSE: 282.93 秒 (4.72 分钟)
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   MAE: 199.20 秒 (3.32 分钟)
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   MAPE: 30.62%
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+目标达成情况:
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   R² > 0.75: ✗
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   RMSE < 300秒: ✓
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   MAE < 200秒: ✓
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+输出文件:
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   模型文件: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/best_model.pkl
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   缩放器: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/scaler.pkl
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   元数据: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/models/metadata.json
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   图表目录: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures
+2025-11-12 19:19:23 - NYC_Taxi - INFO -   日志文件: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/logs/training.log
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 完整流程 完成，耗时: 19.78秒
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 
+================================================================================
+2025-11-12 19:19:23 - NYC_Taxi - INFO - 项目执行完成！
+2025-11-12 19:19:23 - NYC_Taxi - INFO - ================================================================================
+2025-11-12 19:41:09 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 加载训练数据
+2025-11-12 19:41:09 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 开始 加载数据: nyc_taxi_train.csv...
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 数据加载成功: 5000 行 × 11 列
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 内存使用从 0.24 MB 减少到 0.22 MB (减少 7.8%)
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 加载数据: nyc_taxi_train.csv 完成，耗时: 0.03秒
+2025-11-12 19:41:09 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 训练数据 基本信息
+2025-11-12 19:41:09 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 形状: 5000 行 × 11 列
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 内存使用: 0.50 MB
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 
+数据类型分布:
+2025-11-12 19:41:09 - NYC_Taxi - INFO - float32           4
+int8              2
+datetime64[ns]    2
+object            1
+category          1
+int32             1
+Name: count, dtype: int64
+2025-11-12 19:41:09 - NYC_Taxi - INFO - 
+无缺失值
+2025-11-12 19:41:09 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:42:55 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 开始数据预处理
+2025-11-12 19:42:55 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 输入数据形状: (5000, 11)
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 开始 数据预处理...
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 转换数据类型...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   'vendor_id' 转换为 category
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   'store_and_fwd_flag' 转换为 category
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   'passenger_count' 转换为 int8
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 检查重复数据...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   无重复数据
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 处理缺失值...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   无缺失值
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 根据边界条件过滤数据...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   过滤地理坐标...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -     移除 4 行超出NYC范围的数据
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   过滤行程时长...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -     移除 43 行异常行程时长
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   过滤乘客数量...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -     移除 0 行异常乘客数量
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 总共过滤 47 行数据 (0.94%)
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 移除异常值...
+2025-11-12 19:42:55 - NYC_Taxi - INFO -   列 'trip_duration': 移除 59 个异常值 (1.19%)
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 总共移除 59 行异常值 (1.19%)
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 
+预处理完成！
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 输出数据形状: (4894, 11)
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 保留比例: 97.88%
+2025-11-12 19:42:55 - NYC_Taxi - INFO - 数据预处理 完成，耗时: 0.03秒
+2025-11-12 19:47:21 - NYC_Taxi - INFO - 绘制地理散点图: 起点地理位置分布（按行程时长着色）
+2025-11-12 19:47:21 - NYC_Taxi - INFO - 数据已采样至 2000 条
+2025-11-12 19:47:21 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/起点地理位置分布（按行程时长着色）.png
+2025-11-12 19:48:07 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 开始特征工程
+2025-11-12 19:48:07 - NYC_Taxi - INFO - ============================================================
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 开始 特征工程...
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 从 'pickup_datetime' 提取时间特征...
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   提取基础时间特征: year, month, day, weekday, hour
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   创建周末标记: is_weekend
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   创建高峰时段标记: is_rush_hour
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   创建深夜标记: is_night
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 创建地理特征...
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   计算曼哈顿距离: manhattan_distance
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   计算欧氏距离: euclidean_distance
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   计算方位角: bearing
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   计算中心坐标: center_latitude, center_longitude
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 创建交互特征...
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   创建特征: distance_per_passenger
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   创建特征: distance_rush_hour
+2025-11-12 19:48:07 - NYC_Taxi - INFO -   创建特征: hour_distance
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 
+特征工程完成！
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 最终特征数量: 27
+2025-11-12 19:48:07 - NYC_Taxi - INFO - 特征工程 完成，耗时: 0.02秒
+2025-11-12 19:49:17 - NYC_Taxi - INFO - 绘制相关性热力图: Top15特征相关性热力图
+2025-11-12 19:49:17 - NYC_Taxi - INFO - 图表已保存: /Users/lyh/Desktop/ Machine Learning/supervised_learning/projects/03_nyc_taxi_duration_prediction/figures/Top15特征相关性热力图.png
+2025-11-12 19:49:58 - NYC_Taxi - INFO - 选择 18 个特征用于建模
