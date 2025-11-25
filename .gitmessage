@@ -1,0 +1,75 @@
+# <类型>: <简短描述>（不超过50个字符）
+#
+# 主要改动：
+# - <改动点1>
+# - <改动点2>
+# - <改动点3>
+#
+# 技术细节：
+# 1. <模块/组件名称>
+#    - <技术细节1>
+#    - <技术细节2>
+#
+# 2. <模块/组件名称>
+#    - <技术细节1>
+#    - <技术细节2>
+#
+# <其他说明>（可选）：
+# - <关键信息1>
+# - <关键信息2>
+#
+# 相关文件：
+# - <文件路径1>
+# - <文件路径2>
+#
+# Co-Authored-By: lyhzyy0819@gmail.com
+
+# ==== 提交类型 ====
+# feat:     新功能
+# fix:      修复bug
+# docs:     文档更新
+# style:    代码格式调整（不影响功能）
+# refactor: 重构代码（不是新功能也不是修复bug）
+# perf:     性能优化
+# test:     测试相关
+# chore:    构建工具或辅助工具的变动
+# revert:   回退之前的提交
+#
+# ==== 标准格式示例 ====
+# feat: 实现设备打断/隐私模式设置与小红点提示功能
+#
+# 主要改动：
+# - 新增打断功能、智能打断、隐私模式的 API 接口集成
+# - 实现第一次登录小红点提示功能
+# - 优化 Toggle 状态管理逻辑（先调用 API，成功后更新 UI）
+# - 使用 getDlpMacSetting 接口同步打断状态
+#
+# 技术细节：
+# 1. PreferencesService 扩展
+#    - 添加打断功能、智能打断、隐私模式的本地存储
+#    - 添加第一次登录小红点标记存储
+#    - 所有状态按设备 dlpId 单独存储
+#
+# 2. DeviceManagePage 功能集成
+#    - 接入 setInterruption 接口（打断功能、智能打断）
+#    - 接入 setPrivacyMode 接口（隐私模式）
+#    - 接入 getDlpMacSetting 接口（同步打断状态）
+#    - 修复 macId 参数错误（使用 macId 而非 macAddress）
+#    - 优化状态管理：API 成功后才更新 UI，失败时保持原状态
+#    - 实现打断功能和智能打断的小红点提示
+#
+# 3. HomePage 功能集成
+#    - 设置按钮显示第一次登录小红点
+#    - 点击设置按钮时自动清除小红点
+#
+# 数据来源：
+# - 打断功能/智能打断：从 getDlpMacSetting 接口同步
+# - 隐私模式：仅使用本地存储
+# - 小红点状态：本地存储标记
+#
+# 相关文件：
+# - app/src/main/ets/services/PreferencesService.ets
+# - app/src/main/ets/pages/DeviceManagePage.ets
+# - app/src/main/ets/pages/HomePage.ets
+#
+# Co-Authored-By: lyhzyy0819@gmail.com
