@@ -35,8 +35,7 @@ import seaborn as sns
 from pathlib import Path
 import time
 
-# 数据生成和预处理
-from sklearn.datasets import make_classification
+# 数据预处理
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -90,94 +89,107 @@ print("=" * 80)
 
 
 # ============================================================================
-# 第2部分：数据生成（模拟真实欺诈检测场景）
+# 第2部分：加载真实信用卡欺诈检测数据集
 # ============================================================================
 
-def generate_fraud_data(n_samples=50000, fraud_ratio=0.002, n_features=30):
+def load_credit_card_data(file_path=None):
     """
-    生成模拟的信用卡交易数据
+    加载 Kaggle 信用卡欺诈检测数据集
 
-    说明：
-        由于Kaggle数据集需要手动下载，这里使用sklearn生成模拟数据。
-        模拟真实场景特点：
-        - 高度不平衡（欺诈率 ~0.2%）
-        - 特征已PCA降维（模拟隐私保护）
-        - 包含交易金额特征
+    数据集来源：
+        https://www.kaggle.com/mlg-ulb/creditcardfraud
+
+    数据集说明：
+        该数据集包含2013年9月欧洲持卡人的信用卡交易记录。
+        数据集经过PCA降维处理以保护用户隐私。
+
+    数据特点：
+        - 284,807 笔交易记录
+        - 492 笔欺诈交易（占比约 0.172%）
+        - 高度不平衡数据集（正常:欺诈 ≈ 578:1）
+
+    特征说明：
+        - Time: 该交易距离数据集第一笔交易的秒数
+                可用于分析交易时间模式
+        - V1-V28: PCA降维后的特征（原始特征因隐私保护不可知）
+                  这些特征已经过标准化处理
+        - Amount: 交易金额（未经标准化）
+        - Class: 标签，0=正常交易，1=欺诈交易
 
     Parameters:
     -----------
-    n_samples : int
-        总样本数量
-    fraud_ratio : float
-        欺诈交易比例（默认0.2%）
-    n_features : int
-        特征数量（模拟V1-V28 + Time + Amount）
+    file_path : str, optional
+        CSV文件路径。如果为None，则使用默认路径 'creditcard.csv'
 
     Returns:
     --------
     df : DataFrame
-        包含特征和标签的数据框
+        包含所有特征和标签的数据框
+
+    Raises:
+    -------
+    FileNotFoundError
+        如果数据集文件不存在
     """
     print("\n" + "=" * 80)
-    print("🔧 生成模拟信用卡交易数据")
+    print("📂 加载 Kaggle 信用卡欺诈检测数据集")
     print("=" * 80)
 
-    # 计算欺诈样本数量
-    n_fraud = int(n_samples * fraud_ratio)
+    # 确定文件路径
+    if file_path is None:
+        # 默认在当前目录下查找
+        file_path = Path(__file__).parent / 'creditcard.csv'
+
+    file_path = Path(file_path)
+
+    # 检查文件是否存在
+    if not file_path.exists():
+        raise FileNotFoundError(
+            f"\n❌ 数据集文件未找到: {file_path}\n"
+            f"   请从 Kaggle 下载数据集:\n"
+            f"   https://www.kaggle.com/mlg-ulb/creditcardfraud\n"
+            f"   并将 creditcard.csv 放置在当前目录下。"
+        )
+
+    print(f"\n   数据集路径: {file_path}")
+    print(f"   正在加载数据...")
+
+    # 读取CSV文件
+    # 注意：Class列在CSV中可能是字符串类型，需要转换
+    df = pd.read_csv(file_path)
+
+    # 确保Class列是整数类型
+    # Kaggle数据集中Class列可能是"0"/"1"字符串
+    df['Class'] = df['Class'].astype(int)
+
+    # 统计基本信息
+    n_samples = len(df)
+    n_features = df.shape[1] - 1  # 减去Class列
+    n_fraud = df['Class'].sum()
     n_normal = n_samples - n_fraud
+    fraud_ratio = n_fraud / n_samples
 
-    print(f"   - 总交易数: {n_samples:,}")
-    print(f"   - 正常交易: {n_normal:,} ({(1-fraud_ratio)*100:.2f}%)")
-    print(f"   - 欺诈交易: {n_fraud:,} ({fraud_ratio*100:.3f}%)")
-
-    # 使用make_classification生成不平衡数据
-    # weights: 控制类别比例
-    # n_informative: 有信息的特征数量
-    # n_redundant: 冗余特征数量
-    # n_clusters_per_class: 每个类的簇数量
-    # class_sep: 类别分离度（较大表示更容易区分）
-    X, y = make_classification(
-        n_samples=n_samples,
-        n_features=n_features - 2,  # 预留Time和Amount特征
-        n_informative=20,
-        n_redundant=5,
-        n_clusters_per_class=2,
-        weights=[1 - fraud_ratio, fraud_ratio],
-        flip_y=0.01,  # 添加少量噪声
-        random_state=42,
-        class_sep=0.8  # 类别分离度（较难区分，模拟真实场景）
-    )
-
-    # 创建DataFrame
-    # 特征V1-V28模拟PCA降维后的特征（隐私保护）
-    feature_names = [f'V{i}' for i in range(1, n_features - 1)]
-    df = pd.DataFrame(X, columns=feature_names)
-
-    # 添加Time特征（距离第一笔交易的秒数）
-    # 模拟2天的交易数据
-    df['Time'] = np.random.randint(0, 172800, size=n_samples)  # 172800 = 48小时
-
-    # 添加Amount特征（交易金额）
-    # 正常交易：平均88美元，标准差250
-    # 欺诈交易：金额分布略有不同（通常较小或较大）
-    normal_amounts = np.random.gamma(shape=2, scale=44, size=n_normal)
-    fraud_amounts = np.concatenate([
-        np.random.gamma(shape=1, scale=30, size=n_fraud // 2),  # 小额欺诈
-        np.random.gamma(shape=3, scale=100, size=n_fraud - n_fraud // 2)  # 大额欺诈
-    ])
-
-    amounts = np.zeros(n_samples)
-    amounts[y == 0] = normal_amounts
-    amounts[y == 1] = np.random.permutation(fraud_amounts)
-    df['Amount'] = amounts
-
-    # 添加标签
-    df['Class'] = y
-
-    print(f"\n   ✅ 数据生成完成！")
+    print(f"\n   ✅ 数据加载完成！")
+    print(f"\n   【数据集统计】")
+    print(f"      - 总交易数: {n_samples:,}")
+    print(f"      - 正常交易: {n_normal:,} ({(1-fraud_ratio)*100:.3f}%)")
+    print(f"      - 欺诈交易: {n_fraud:,} ({fraud_ratio*100:.3f}%)")
+    print(f"      - 不平衡比例: 1:{n_normal//n_fraud}")
     print(f"      - 特征数量: {n_features}")
-    print(f"      - 数据形状: {df.shape}")
-    print(f"      - 欺诈比例: {y.mean():.4f}")
+
+    print(f"\n   【特征列表】")
+    print(f"      - Time: 距离第一笔交易的秒数")
+    print(f"      - V1-V28: PCA降维后的匿名特征")
+    print(f"      - Amount: 交易金额")
+    print(f"      - Class: 标签 (0=正常, 1=欺诈)")
+
+    # 显示数据集的基本统计
+    print(f"\n   【数值统计摘要】")
+    print(f"      Time范围: {df['Time'].min():.0f} - {df['Time'].max():.0f} 秒")
+    print(f"      Time跨度: {df['Time'].max()/3600:.1f} 小时")
+    print(f"      Amount范围: ${df['Amount'].min():.2f} - ${df['Amount'].max():.2f}")
+    print(f"      Amount均值: ${df['Amount'].mean():.2f}")
+    print(f"      Amount中位数: ${df['Amount'].median():.2f}")
 
     return df
 
@@ -192,11 +204,19 @@ def explore_data(df):
 
     目的：
         了解数据的基本情况、类别分布、特征差异等
+        针对真实 Kaggle 数据集进行全面的 EDA
+
+    分析内容：
+        1. 数据基本信息（形状、缺失值、数据类型）
+        2. 类别分布分析（正常 vs 欺诈）
+        3. 交易金额分析（正常 vs 欺诈的金额差异）
+        4. 时间分布分析（交易时间模式）
+        5. V1-V28 特征分析（PCA特征的分布差异）
 
     Parameters:
     -----------
     df : DataFrame
-        交易数据
+        交易数据（包含 Time, V1-V28, Amount, Class 列）
     """
     print("\n" + "=" * 80)
     print("🔍 数据探索分析 (EDA)")
@@ -208,6 +228,9 @@ def explore_data(df):
     print(f"   - 特征数量: {df.shape[1] - 1}")
     print(f"   - 样本数量: {df.shape[0]:,}")
     print(f"   - 缺失值: {df.isnull().sum().sum()}")
+    print(f"   - 数据类型:")
+    for col in ['Time', 'Amount', 'Class']:
+        print(f"      {col}: {df[col].dtype}")
     print(f"\n   前5行数据:")
     print(df.head())
 
@@ -339,6 +362,105 @@ def explore_data(df):
     print("   ✅ 时间分布图已保存到: outputs/03_time_distribution.png")
     plt.show()
 
+    # 6. V1-V28 PCA特征分析
+    # 这些特征是原始交易特征经过PCA降维后的结果
+    # 分析正常交易和欺诈交易在这些特征上的差异
+    print("\n【V1-V28 PCA特征分析】")
+    print("   说明: V1-V28是原始特征经PCA降维后的匿名特征")
+    print("   分析正常交易与欺诈交易在这些特征上的分布差异...")
+
+    # 获取V1-V28特征列
+    v_features = [f'V{i}' for i in range(1, 29)]
+
+    # 计算正常和欺诈交易的特征均值差异
+    normal_means = df[df['Class'] == 0][v_features].mean()
+    fraud_means = df[df['Class'] == 1][v_features].mean()
+    mean_diff = fraud_means - normal_means
+
+    # 找出差异最大的特征（对欺诈检测最有价值的特征）
+    abs_diff = mean_diff.abs().sort_values(ascending=False)
+    top_features = abs_diff.head(10).index.tolist()
+
+    print(f"\n   欺诈交易与正常交易均值差异最大的10个特征:")
+    for i, feat in enumerate(top_features, 1):
+        diff = mean_diff[feat]
+        direction = "↑ 欺诈更高" if diff > 0 else "↓ 欺诈更低"
+        print(f"      {i}. {feat}: 差异 {diff:+.4f} ({direction})")
+
+    # 可视化差异最大的4个特征分布
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig.suptitle('欺诈交易与正常交易的PCA特征分布对比（差异最大的4个特征）',
+                 fontsize=14, fontweight='bold', y=0.995)
+
+    for idx, feat in enumerate(top_features[:4]):
+        row, col = idx // 2, idx % 2
+        ax = axes[row, col]
+
+        # 绘制正常交易的分布
+        normal_data = df[df['Class'] == 0][feat]
+        fraud_data = df[df['Class'] == 1][feat]
+
+        ax.hist(normal_data, bins=50, alpha=0.6, color='steelblue',
+                label=f'正常 (n={len(normal_data):,})', density=True, edgecolor='none')
+        ax.hist(fraud_data, bins=50, alpha=0.7, color='coral',
+                label=f'欺诈 (n={len(fraud_data):,})', density=True, edgecolor='none')
+
+        # 添加均值线
+        ax.axvline(normal_data.mean(), color='blue', linestyle='--', linewidth=2,
+                   label=f'正常均值: {normal_data.mean():.2f}')
+        ax.axvline(fraud_data.mean(), color='red', linestyle='--', linewidth=2,
+                   label=f'欺诈均值: {fraud_data.mean():.2f}')
+
+        ax.set_xlabel(f'{feat} 值', fontsize=11, fontweight='bold')
+        ax.set_ylabel('密度', fontsize=11, fontweight='bold')
+        ax.set_title(f'{feat} 特征分布对比', fontsize=12, fontweight='bold')
+        ax.legend(fontsize=9)
+        ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig(output_dir / '03b_feature_distribution.png', dpi=150, bbox_inches='tight')
+    print("\n   ✅ 特征分布图已保存到: outputs/03b_feature_distribution.png")
+    plt.show()
+
+    # 7. 特征相关性热力图（仅展示与Class相关性较高的特征）
+    print("\n【特征与欺诈标签的相关性分析】")
+
+    # 计算所有特征与Class的相关性
+    correlations = df.corr()['Class'].drop('Class').sort_values(key=abs, ascending=False)
+
+    print(f"\n   与欺诈标签相关性最高的10个特征:")
+    for i, (feat, corr) in enumerate(correlations.head(10).items(), 1):
+        direction = "正相关" if corr > 0 else "负相关"
+        print(f"      {i}. {feat}: {corr:+.4f} ({direction})")
+
+    # 绘制相关性条形图
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    # 选择相关性绝对值最高的15个特征
+    top_corr = correlations.head(15)
+    colors = ['coral' if x > 0 else 'steelblue' for x in top_corr.values]
+
+    bars = ax.barh(range(len(top_corr)), top_corr.values, color=colors, alpha=0.8, edgecolor='black')
+    ax.set_yticks(range(len(top_corr)))
+    ax.set_yticklabels(top_corr.index)
+    ax.set_xlabel('与欺诈标签的相关系数', fontsize=12, fontweight='bold')
+    ax.set_title('特征与欺诈标签(Class)的相关性排名', fontsize=14, fontweight='bold')
+    ax.axvline(0, color='black', linewidth=1)
+    ax.grid(True, alpha=0.3, axis='x')
+
+    # 添加数值标签
+    for bar, val in zip(bars, top_corr.values):
+        ax.text(val + 0.01 if val > 0 else val - 0.01,
+                bar.get_y() + bar.get_height()/2,
+                f'{val:.3f}',
+                va='center', ha='left' if val > 0 else 'right',
+                fontsize=9, fontweight='bold')
+
+    plt.tight_layout()
+    plt.savefig(output_dir / '03c_feature_correlation.png', dpi=150, bbox_inches='tight')
+    print("   ✅ 相关性分析图已保存到: outputs/03c_feature_correlation.png")
+    plt.show()
+
 
 # ============================================================================
 # 第4部分：数据预处理
@@ -348,29 +470,42 @@ def preprocess_data(df):
     """
     数据预处理
 
+    针对 Kaggle 信用卡欺诈检测数据集的预处理步骤：
+
     步骤：
         1. 分离特征和标签
-        2. 标准化处理（Amount特征通常需要标准化）
+           - 特征: Time, V1-V28, Amount（共30维）
+           - 标签: Class（0=正常, 1=欺诈）
+
+        2. 标准化处理
+           - V1-V28 已经过 PCA 处理，但仍需标准化以统一尺度
+           - Time 和 Amount 特征尤其需要标准化
+           - 使用 StandardScaler: (x - mean) / std
+
         3. 划分训练集和测试集
-        4. 提取正常交易（用于One-Class训练）
+           - 使用分层采样保持类别比例一致
+           - 70% 训练，30% 测试
+
+        4. 提取正常交易样本
+           - 用于 One-Class 方法（只用正常样本训练）
 
     Parameters:
     -----------
     df : DataFrame
-        原始数据
+        原始数据（包含 Time, V1-V28, Amount, Class 列）
 
     Returns:
     --------
     X_train : ndarray
-        训练集特征
+        训练集特征，形状 (n_train_samples, 30)
     X_test : ndarray
-        测试集特征
+        测试集特征，形状 (n_test_samples, 30)
     y_train : ndarray
-        训练集标签
+        训练集标签，形状 (n_train_samples,)
     y_test : ndarray
-        测试集标签
+        测试集标签，形状 (n_test_samples,)
     X_train_normal : ndarray
-        训练集中的正常交易（用于One-Class方法）
+        训练集中的正常交易（用于 One-Class 方法）
     scaler : StandardScaler
         标准化器（用于后续新数据预处理）
     """
@@ -379,11 +514,15 @@ def preprocess_data(df):
     print("=" * 80)
 
     # 1. 分离特征和标签
+    # 特征列: Time, V1-V28, Amount
+    # 标签列: Class
     X = df.drop('Class', axis=1).values
     y = df['Class'].values
 
-    print(f"\n   特征矩阵形状: {X.shape}")
-    print(f"   标签向量形状: {y.shape}")
+    print(f"\n   【数据分离】")
+    print(f"      - 特征矩阵形状: {X.shape}")
+    print(f"      - 标签向量形状: {y.shape}")
+    print(f"      - 特征列: Time, V1-V28, Amount")
 
     # 2. 标准化处理
     # 为什么需要标准化？
@@ -1189,28 +1328,317 @@ def save_models_and_metrics(models, all_metrics, scaler):
 
 
 # ============================================================================
+# 第8.5部分：训练模式对比实验（半监督 vs 无监督）
+# ============================================================================
+
+def compare_training_modes(X_train, X_train_normal, X_test, y_train, y_test, contamination):
+    """
+    对比实验：半监督模式 vs 无监督模式
+
+    核心概念说明：
+    ==============
+
+    异常检测算法有两种主要的训练模式，理解它们的区别对于选择正确的方法至关重要：
+
+    【半监督模式 (Semi-supervised)】
+    --------------------------------
+    - 训练数据：只使用正常样本 (X_train_normal)
+    - 核心思想：学习"什么是正常"，然后将不符合正常模式的判定为异常
+    - 适用场景：
+        * 有标签数据，知道哪些是正常样本
+        * 正常样本数量充足
+        * 异常样本太少不足以学习异常模式
+    - contamination 参数含义：预测时期望的异常比例（影响决策阈值）
+
+    【无监督模式 (Unsupervised)】
+    ----------------------------
+    - 训练数据：使用全部数据 (X_train)，包含少量异常
+    - 核心思想：假设数据中有 contamination 比例的异常，找出最"不正常"的那部分
+    - 适用场景：
+        * 无标签数据
+        * 不确定哪些是正常样本
+        * 真实生产环境中常见
+    - contamination 参数含义：训练数据中实际的异常比例
+
+    【为什么要对比？】
+    -----------------
+    在这个信用卡欺诈检测数据集中：
+    - 我们有标签，可以使用半监督模式
+    - 但真实业务中往往没有完整标签，需要用无监督模式
+    - 对比两种模式可以帮助理解各自的优缺点
+
+    Parameters:
+    -----------
+    X_train : ndarray
+        完整训练集（包含正常+欺诈样本）
+    X_train_normal : ndarray
+        仅包含正常样本的训练集
+    X_test : ndarray
+        测试集
+    y_train : ndarray
+        训练集标签
+    y_test : ndarray
+        测试集标签
+    contamination : float
+        异常比例
+
+    Returns:
+    --------
+    comparison_results : dict
+        包含两种模式的对比结果
+    """
+    print("\n" + "=" * 80)
+    print("🔬 训练模式对比实验：半监督 vs 无监督")
+    print("=" * 80)
+
+    print("""
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  本实验对比 Isolation Forest 在两种训练模式下的性能差异              │
+    ├─────────────────────────────────────────────────────────────────────┤
+    │  半监督模式：只用正常样本训练 → 学习"正常是什么样"                   │
+    │  无监督模式：用全部数据训练   → 找出"最不正常的那部分"               │
+    └─────────────────────────────────────────────────────────────────────┘
+    """)
+
+    output_dir = Path('outputs')
+    results = {}
+
+    # =========================================================================
+    # 实验1：半监督模式（只用正常样本训练）
+    # =========================================================================
+    print("\n【实验1】半监督模式 (Semi-supervised)")
+    print("-" * 60)
+    print(f"   训练数据：仅正常样本")
+    print(f"   训练样本数：{X_train_normal.shape[0]:,}")
+    print(f"   contamination：{contamination:.5f}（作为预测阈值）")
+
+    # 训练半监督模型
+    model_semi = IsolationForest(
+        contamination=contamination,
+        n_estimators=100,
+        max_samples='auto',
+        random_state=42,
+        n_jobs=-1
+    )
+
+    start_time = time.time()
+    model_semi.fit(X_train_normal)  # 只用正常样本
+    train_time_semi = time.time() - start_time
+
+    # 预测
+    y_pred_semi_raw = model_semi.predict(X_test)
+    y_pred_semi = np.where(y_pred_semi_raw == -1, 1, 0)
+    y_scores_semi = -model_semi.decision_function(X_test)
+
+    # 评估
+    precision_semi = precision_score(y_test, y_pred_semi, zero_division=0)
+    recall_semi = recall_score(y_test, y_pred_semi, zero_division=0)
+    f1_semi = f1_score(y_test, y_pred_semi, zero_division=0)
+    pr_auc_semi = average_precision_score(y_test, y_scores_semi)
+
+    print(f"\n   训练时间：{train_time_semi:.3f} 秒")
+    print(f"   Precision：{precision_semi:.4f}")
+    print(f"   Recall：{recall_semi:.4f}")
+    print(f"   F1-Score：{f1_semi:.4f}")
+    print(f"   PR-AUC：{pr_auc_semi:.4f}")
+
+    results['semi_supervised'] = {
+        'precision': precision_semi,
+        'recall': recall_semi,
+        'f1_score': f1_semi,
+        'pr_auc': pr_auc_semi,
+        'train_time': train_time_semi
+    }
+
+    # =========================================================================
+    # 实验2：无监督模式（用全部数据训练）
+    # =========================================================================
+    print("\n【实验2】无监督模式 (Unsupervised)")
+    print("-" * 60)
+    print(f"   训练数据：全部训练样本（包含少量欺诈）")
+    print(f"   训练样本数：{X_train.shape[0]:,}")
+    print(f"   其中欺诈样本：{y_train.sum():,} ({y_train.mean()*100:.3f}%)")
+    print(f"   contamination：{contamination:.5f}（训练数据中的实际异常比例）")
+
+    # 训练无监督模型
+    model_unsup = IsolationForest(
+        contamination=contamination,
+        n_estimators=100,
+        max_samples='auto',
+        random_state=42,
+        n_jobs=-1
+    )
+
+    start_time = time.time()
+    model_unsup.fit(X_train)  # 用全部数据
+    train_time_unsup = time.time() - start_time
+
+    # 预测
+    y_pred_unsup_raw = model_unsup.predict(X_test)
+    y_pred_unsup = np.where(y_pred_unsup_raw == -1, 1, 0)
+    y_scores_unsup = -model_unsup.decision_function(X_test)
+
+    # 评估
+    precision_unsup = precision_score(y_test, y_pred_unsup, zero_division=0)
+    recall_unsup = recall_score(y_test, y_pred_unsup, zero_division=0)
+    f1_unsup = f1_score(y_test, y_pred_unsup, zero_division=0)
+    pr_auc_unsup = average_precision_score(y_test, y_scores_unsup)
+
+    print(f"\n   训练时间：{train_time_unsup:.3f} 秒")
+    print(f"   Precision：{precision_unsup:.4f}")
+    print(f"   Recall：{recall_unsup:.4f}")
+    print(f"   F1-Score：{f1_unsup:.4f}")
+    print(f"   PR-AUC：{pr_auc_unsup:.4f}")
+
+    results['unsupervised'] = {
+        'precision': precision_unsup,
+        'recall': recall_unsup,
+        'f1_score': f1_unsup,
+        'pr_auc': pr_auc_unsup,
+        'train_time': train_time_unsup
+    }
+
+    # =========================================================================
+    # 对比分析
+    # =========================================================================
+    print("\n" + "=" * 60)
+    print("📊 对比分析结果")
+    print("=" * 60)
+
+    print(f"\n{'指标':<15} {'半监督模式':<15} {'无监督模式':<15} {'差异':<15}")
+    print("-" * 60)
+
+    metrics_names = ['Precision', 'Recall', 'F1-Score', 'PR-AUC']
+    semi_values = [precision_semi, recall_semi, f1_semi, pr_auc_semi]
+    unsup_values = [precision_unsup, recall_unsup, f1_unsup, pr_auc_unsup]
+
+    for name, semi_val, unsup_val in zip(metrics_names, semi_values, unsup_values):
+        diff = unsup_val - semi_val
+        diff_str = f"+{diff:.4f}" if diff > 0 else f"{diff:.4f}"
+        winner = "← 胜" if semi_val > unsup_val else "胜 →" if unsup_val > semi_val else "平"
+        print(f"{name:<15} {semi_val:<15.4f} {unsup_val:<15.4f} {diff_str:<10} {winner}")
+
+    # 结论
+    print("\n【结论与建议】")
+    if f1_semi > f1_unsup:
+        print("   ✅ 半监督模式表现更好")
+        print("   原因分析：")
+        print("      - 训练数据中只有纯正常样本，模型学到了清晰的'正常'边界")
+        print("      - 无监督模式中，少量欺诈样本可能干扰了模型对'正常'的学习")
+    elif f1_unsup > f1_semi:
+        print("   ✅ 无监督模式表现更好")
+        print("   原因分析：")
+        print("      - 训练数据中的欺诈样本帮助模型学习了异常模式")
+        print("      - Isolation Forest 在无监督场景下的设计使其能自动识别异常")
+    else:
+        print("   ⚖️ 两种模式表现相当")
+
+    print("\n   【何时使用哪种模式？】")
+    print("   - 半监督模式：有标签、确信训练数据是干净的")
+    print("   - 无监督模式：无标签、数据可能已被污染、生产环境")
+
+    # =========================================================================
+    # 可视化对比
+    # =========================================================================
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    fig.suptitle('Isolation Forest 训练模式对比：半监督 vs 无监督',
+                 fontsize=14, fontweight='bold', y=1.02)
+
+    # 图1：性能指标对比
+    x = np.arange(len(metrics_names))
+    width = 0.35
+
+    bars1 = axes[0].bar(x - width/2, semi_values, width, label='半监督模式',
+                        color='steelblue', alpha=0.8, edgecolor='black')
+    bars2 = axes[0].bar(x + width/2, unsup_values, width, label='无监督模式',
+                        color='coral', alpha=0.8, edgecolor='black')
+
+    axes[0].set_xlabel('评估指标', fontsize=11, fontweight='bold')
+    axes[0].set_ylabel('分数', fontsize=11, fontweight='bold')
+    axes[0].set_title('性能指标对比', fontsize=12, fontweight='bold')
+    axes[0].set_xticks(x)
+    axes[0].set_xticklabels(metrics_names)
+    axes[0].legend(fontsize=10)
+    axes[0].set_ylim(0, max(max(semi_values), max(unsup_values)) * 1.2)
+    axes[0].grid(True, alpha=0.3, axis='y')
+
+    # 添加数值标签
+    for bar in bars1:
+        height = bar.get_height()
+        axes[0].text(bar.get_x() + bar.get_width()/2., height,
+                     f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+    for bar in bars2:
+        height = bar.get_height()
+        axes[0].text(bar.get_x() + bar.get_width()/2., height,
+                     f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+
+    # 图2：PR曲线对比
+    pr_precision_semi, pr_recall_semi, _ = precision_recall_curve(y_test, y_scores_semi)
+    pr_precision_unsup, pr_recall_unsup, _ = precision_recall_curve(y_test, y_scores_unsup)
+
+    axes[1].plot(pr_recall_semi, pr_precision_semi, color='steelblue', linewidth=2.5,
+                 label=f'半监督 (AP={pr_auc_semi:.4f})')
+    axes[1].plot(pr_recall_unsup, pr_precision_unsup, color='coral', linewidth=2.5,
+                 label=f'无监督 (AP={pr_auc_unsup:.4f})')
+
+    axes[1].set_xlabel('召回率 (Recall)', fontsize=11, fontweight='bold')
+    axes[1].set_ylabel('精确率 (Precision)', fontsize=11, fontweight='bold')
+    axes[1].set_title('Precision-Recall 曲线对比', fontsize=12, fontweight='bold')
+    axes[1].legend(loc='best', fontsize=10)
+    axes[1].grid(True, alpha=0.3)
+    axes[1].set_xlim([0, 1])
+    axes[1].set_ylim([0, 1])
+
+    plt.tight_layout()
+    plt.savefig(output_dir / '09_training_mode_comparison.png', dpi=150, bbox_inches='tight')
+    print(f"\n   ✅ 对比图已保存到: outputs/09_training_mode_comparison.png")
+    plt.show()
+
+    return results
+
+
+# ============================================================================
 # 第9部分：主函数
 # ============================================================================
 
 def main():
     """
     主函数：执行完整的欺诈检测流程
+
+    使用 Kaggle 信用卡欺诈检测数据集，完成以下步骤：
+        1. 加载数据集
+        2. 数据探索分析 (EDA)
+        3. 数据预处理（标准化、划分训练/测试集）
+        4. 训练三种异常检测模型
+           - Isolation Forest
+           - One-Class SVM
+           - Local Outlier Factor (LOF)
+        5. 模型评估与对比
+        6. 可视化结果
+        7. 保存模型
+        8. 生成总结报告
     """
     print("\n" + "=" * 80)
     print("🚀 信用卡欺诈检测项目开始")
+    print("   使用 Kaggle 真实数据集 (creditcard.csv)")
     print("=" * 80)
 
-    # Step 1: 生成数据
-    df = generate_fraud_data(n_samples=50000, fraud_ratio=0.002, n_features=30)
+    # Step 1: 加载真实数据集
+    # 数据集来源: https://www.kaggle.com/mlg-ulb/creditcardfraud
+    df = load_credit_card_data()
 
-    # Step 2: 数据探索
+    # Step 2: 数据探索分析
     explore_data(df)
 
     # Step 3: 数据预处理
     X_train, X_test, y_train, y_test, X_train_normal, scaler = preprocess_data(df)
 
     # Step 4: 训练三种异常检测模型
-    contamination = 0.002  # 预期异常比例
+    # 根据真实数据集的欺诈比例设置 contamination 参数
+    # 实际欺诈比例约为 492/284807 ≈ 0.00173
+    fraud_ratio = df['Class'].mean()
+    contamination = fraud_ratio
+    print(f"\n   使用欺诈比例作为 contamination 参数: {contamination:.5f}")
 
     # 4.1 Isolation Forest
     model_if, train_time_if = train_isolation_forest(X_train_normal, contamination)
@@ -1238,6 +1666,12 @@ def main():
     plot_pr_curves(all_metrics)
     plot_metrics_comparison(all_metrics)
     visualize_anomalies_tsne(X_test, y_test, y_pred_if, y_pred_svm, y_pred_lof)
+
+    # Step 6.5: 训练模式对比实验（半监督 vs 无监督）
+    # 这个实验帮助学习者理解异常检测的两种训练策略
+    comparison_results = compare_training_modes(
+        X_train, X_train_normal, X_test, y_train, y_test, contamination
+    )
 
     # Step 7: 保存模型
     models = {
