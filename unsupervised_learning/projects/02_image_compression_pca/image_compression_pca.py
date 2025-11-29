@@ -36,8 +36,8 @@ import time
 # PCA算法
 from sklearn.decomposition import PCA
 
-# 数据集
-from sklearn.datasets import fetch_olivetti_faces
+# 数据集（使用本地文件，无需从远程下载）
+# from sklearn.datasets import fetch_olivetti_faces  # 已改为本地加载
 
 # 评估指标
 from sklearn.metrics import mean_squared_error
@@ -93,13 +93,28 @@ def load_olivetti_faces():
     print("📂 正在加载Olivetti Faces数据集...")
     print("=" * 80)
 
-    # 下载并加载数据集（首次运行会自动下载）
-    dataset = fetch_olivetti_faces(shuffle=True, random_state=42)
+    # ========================================================================
+    # 从本地 archive/ 目录加载数据（Kaggle 下载的数据集）
+    # 解决了从远程服务器下载时的 403 错误问题
+    # ========================================================================
+    data_dir = Path(__file__).parent / 'archive'
 
-    # 提取图像数据和标签
-    faces = dataset.data      # shape: (400, 4096) = 400张图像，每张64*64=4096个像素
-    targets = dataset.target  # shape: (400,) 人脸ID标签
-    images = dataset.images   # shape: (400, 64, 64) 原始图像格式
+    # 加载原始数据
+    # olivetti_faces.npy: shape (400, 64, 64) - 400张64x64的灰度人脸图像
+    # olivetti_faces_target.npy: shape (400,) - 每张图像对应的人物ID (0-39)
+    faces_raw = np.load(data_dir / 'olivetti_faces.npy')
+    targets = np.load(data_dir / 'olivetti_faces_target.npy')
+
+    # 转换格式以匹配原始 sklearn API 的输出格式
+    images = faces_raw                    # shape: (400, 64, 64) 原始图像格式
+    faces = faces_raw.reshape(400, -1)    # shape: (400, 4096) 展平为向量
+
+    # 打乱数据顺序（保持与原代码一致的随机种子，确保结果可复现）
+    np.random.seed(42)
+    shuffle_idx = np.random.permutation(len(faces))
+    faces = faces[shuffle_idx]
+    targets = targets[shuffle_idx]
+    images = images[shuffle_idx]
 
     print(f"✅ 数据加载成功！")
     print(f"   - 图像数量: {faces.shape[0]}")

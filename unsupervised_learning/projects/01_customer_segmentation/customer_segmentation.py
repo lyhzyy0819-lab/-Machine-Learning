@@ -657,106 +657,292 @@ def gmm_clustering(X, X_scaled, optimal_k, feature_names, kmeans_labels):
     print(f"  • BIC推荐组件数: {best_n_bic}")
     print(f"  • AIC推荐组件数: {best_n_aic}")
 
-    # ----- 2. 训练GMM模型 -----
-    print(f"\n【2. 训练GMM模型】(使用K={optimal_k}进行公平对比)")
+    # ----- 2. 训练三个GMM模型进行对比 -----
+    print(f"\n【2. 训练GMM模型：BIC/AIC推荐值 vs K-Means对齐】")
 
-    gmm = GaussianMixture(
-        n_components=optimal_k,     # 与K-Means相同的簇数
-        covariance_type='full',     # 完整协方差矩阵（最灵活）
+    # 存储三个模型及其信息
+    gmm_models = {}
+
+    # 2.1 GMM with BIC recommended components
+    print(f"\n  (1) GMM with BIC推荐组件数 = {best_n_bic}")
+    gmm_bic = GaussianMixture(
+        n_components=best_n_bic,
+        covariance_type='full',
         max_iter=100,
         n_init=10,
         random_state=42
     )
+    gmm_bic.fit(X_scaled)
+    gmm_models['BIC'] = {
+        'model': gmm_bic,
+        'n_components': best_n_bic,
+        'labels': gmm_bic.predict(X_scaled),
+        'proba': gmm_bic.predict_proba(X_scaled),
+        'bic': gmm_bic.bic(X_scaled),
+        'aic': gmm_bic.aic(X_scaled)
+    }
+    print(f"      收敛: {gmm_bic.converged_}, 迭代: {gmm_bic.n_iter_}")
 
-    gmm.fit(X_scaled)
-    gmm_labels = gmm.predict(X_scaled)
-    gmm_proba = gmm.predict_proba(X_scaled)  # 软分配概率
+    # 2.2 GMM with AIC recommended components (如果与BIC不同)
+    if best_n_aic != best_n_bic:
+        print(f"\n  (2) GMM with AIC推荐组件数 = {best_n_aic}")
+        gmm_aic = GaussianMixture(
+            n_components=best_n_aic,
+            covariance_type='full',
+            max_iter=100,
+            n_init=10,
+            random_state=42
+        )
+        gmm_aic.fit(X_scaled)
+        gmm_models['AIC'] = {
+            'model': gmm_aic,
+            'n_components': best_n_aic,
+            'labels': gmm_aic.predict(X_scaled),
+            'proba': gmm_aic.predict_proba(X_scaled),
+            'bic': gmm_aic.bic(X_scaled),
+            'aic': gmm_aic.aic(X_scaled)
+        }
+        print(f"      收敛: {gmm_aic.converged_}, 迭代: {gmm_aic.n_iter_}")
+    else:
+        print(f"\n  (2) AIC推荐组件数 = {best_n_aic} (与BIC相同，跳过)")
+        gmm_models['AIC'] = gmm_models['BIC']  # 引用同一个模型
 
-    print(f"  • 是否收敛: {gmm.converged_}")
-    print(f"  • 迭代次数: {gmm.n_iter_}")
+    # 2.3 GMM with K-Means aligned K (如果与BIC/AIC都不同)
+    if optimal_k not in [best_n_bic, best_n_aic]:
+        print(f"\n  (3) GMM with K-Means对齐 K = {optimal_k}")
+        gmm_k = GaussianMixture(
+            n_components=optimal_k,
+            covariance_type='full',
+            max_iter=100,
+            n_init=10,
+            random_state=42
+        )
+        gmm_k.fit(X_scaled)
+        gmm_models['K-Means'] = {
+            'model': gmm_k,
+            'n_components': optimal_k,
+            'labels': gmm_k.predict(X_scaled),
+            'proba': gmm_k.predict_proba(X_scaled),
+            'bic': gmm_k.bic(X_scaled),
+            'aic': gmm_k.aic(X_scaled)
+        }
+        print(f"      收敛: {gmm_k.converged_}, 迭代: {gmm_k.n_iter_}")
+    elif optimal_k == best_n_bic:
+        print(f"\n  (3) K-Means K = {optimal_k} (与BIC相同，复用)")
+        gmm_models['K-Means'] = gmm_models['BIC']
+    else:  # optimal_k == best_n_aic
+        print(f"\n  (3) K-Means K = {optimal_k} (与AIC相同，复用)")
+        gmm_models['K-Means'] = gmm_models['AIC']
 
-    # ----- 3. 评估对比 -----
-    print("\n【3. GMM vs K-Means 对比】")
-    print("-" * 50)
+    # 保留原有变量名以兼容后续代码
+    gmm = gmm_models['K-Means']['model']
+    gmm_labels = gmm_models['K-Means']['labels']
+    gmm_proba = gmm_models['K-Means']['proba']
 
-    sil_gmm = silhouette_score(X_scaled, gmm_labels)
-    sil_kmeans = silhouette_score(X_scaled, kmeans_labels)
+    # ----- 3. 全面评估对比 -----
+    print("\n【3. 全面评估对比：K-Means + 三个GMM模型】")
+    print("=" * 100)
 
-    db_gmm = davies_bouldin_score(X_scaled, gmm_labels)
-    db_kmeans = davies_bouldin_score(X_scaled, kmeans_labels)
+    # 计算所有模型的评估指标
+    eval_results = {}
 
-    print(f"  {'指标':<20} {'K-Means':<15} {'GMM':<15}")
-    print("  " + "-" * 50)
-    print(f"  {'轮廓系数':<20} {sil_kmeans:<15.4f} {sil_gmm:<15.4f}")
-    print(f"  {'Davies-Bouldin':<20} {db_kmeans:<15.4f} {db_gmm:<15.4f}")
-    print("  " + "-" * 50)
+    # K-Means
+    eval_results['K-Means'] = {
+        'n_components': optimal_k,
+        'silhouette': silhouette_score(X_scaled, kmeans_labels),
+        'davies_bouldin': davies_bouldin_score(X_scaled, kmeans_labels),
+        'bic': 'N/A',
+        'aic': 'N/A'
+    }
 
-    # ----- 4. 可视化对比 -----
-    fig, axes = plt.subplots(2, 2, figsize=(16, 14))
+    # 三个 GMM 模型
+    for name, info in gmm_models.items():
+        eval_results[f'GMM({name})'] = {
+            'n_components': info['n_components'],
+            'silhouette': silhouette_score(X_scaled, info['labels']),
+            'davies_bouldin': davies_bouldin_score(X_scaled, info['labels']),
+            'bic': info['bic'],
+            'aic': info['aic']
+        }
 
-    colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7']
+    # 打印对比表格
+    print(f"\n  {'模型':<15} {'组件数':<8} {'轮廓系数':<12} {'Davies-Bouldin':<15} {'BIC':<12} {'AIC':<12}")
+    print("  " + "-" * 100)
 
-    # 图1: BIC/AIC曲线
+    for model_name, metrics in eval_results.items():
+        bic_str = f"{metrics['bic']:.2f}" if metrics['bic'] != 'N/A' else 'N/A'
+        aic_str = f"{metrics['aic']:.2f}" if metrics['aic'] != 'N/A' else 'N/A'
+        print(f"  {model_name:<15} {metrics['n_components']:<8} "
+              f"{metrics['silhouette']:<12.4f} {metrics['davies_bouldin']:<15.4f} "
+              f"{bic_str:<12} {aic_str:<12}")
+
+    print("  " + "-" * 100)
+    print("\n  💡 指标解读：")
+    print("     • 轮廓系数：[-1, 1]，越大越好，表示簇内紧密度和簇间分离度")
+    print("     • Davies-Bouldin：[0, ∞)，越小越好，表示簇内距离与簇间距离的比值")
+    print("     • BIC/AIC：越小越好，平衡模型复杂度和拟合质量")
+
+    # 保留原有变量以兼容后续代码
+    sil_gmm = eval_results['GMM(K-Means)']['silhouette']
+    sil_kmeans = eval_results['K-Means']['silhouette']
+    db_gmm = eval_results['GMM(K-Means)']['davies_bouldin']
+    db_kmeans = eval_results['K-Means']['davies_bouldin']
+
+    # ----- 4. 可视化全面对比 -----
+    fig, axes = plt.subplots(2, 3, figsize=(20, 12))
+
+    # 定义颜色方案（支持最多10个组件）
+    colors_5 = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7']
+    # 10种颜色（适用于组件数 > 5 的情况）
+    colors_10 = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
+                 '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf']
+
+    def get_colors(n):
+        """根据组件数返回合适的颜色列表"""
+        return colors_5 if n <= 5 else colors_10
+
+    # ========== 第一行 ==========
+
+    # 图1: BIC/AIC曲线（保留原有）
     ax1 = axes[0, 0]
-    ax1.plot(n_components_range, bic_scores, 'o-', label='BIC', linewidth=2, markersize=8)
-    ax1.plot(n_components_range, aic_scores, 's-', label='AIC', linewidth=2, markersize=8)
+    ax1.plot(n_components_range, bic_scores, 'o-', label='BIC', linewidth=2, markersize=8, color='#e74c3c')
+    ax1.plot(n_components_range, aic_scores, 's-', label='AIC', linewidth=2, markersize=8, color='#3498db')
     ax1.axvline(best_n_bic, color='red', linestyle='--', alpha=0.7, label=f'BIC最优: {best_n_bic}')
-    ax1.set_xlabel('组件数')
-    ax1.set_ylabel('信息准则值')
-    ax1.set_title('BIC/AIC 模型选择', fontweight='bold')
-    ax1.legend()
+    if best_n_aic != best_n_bic:
+        ax1.axvline(best_n_aic, color='blue', linestyle='--', alpha=0.7, label=f'AIC最优: {best_n_aic}')
+    ax1.set_xlabel('组件数', fontsize=11)
+    ax1.set_ylabel('信息准则值', fontsize=11)
+    ax1.set_title('BIC/AIC 模型选择', fontsize=12, fontweight='bold')
+    ax1.legend(fontsize=9)
     ax1.grid(True, alpha=0.3)
 
-    # 图2: K-Means结果
+    # 图2: K-Means结果（保留原有）
     ax2 = axes[0, 1]
+    colors_kmeans = get_colors(optimal_k)
     for i in range(optimal_k):
         mask = kmeans_labels == i
-        ax2.scatter(X[mask, 0], X[mask, 1], c=colors[i], s=60, alpha=0.6,
+        ax2.scatter(X[mask, 0], X[mask, 1], c=[colors_kmeans[i]], s=60, alpha=0.6,
                    edgecolors='white', linewidth=0.5, label=f'簇 {i}')
-    ax2.set_xlabel(feature_names[0])
-    ax2.set_ylabel(feature_names[1])
-    ax2.set_title(f'K-Means (轮廓系数={sil_kmeans:.4f})', fontweight='bold')
-    ax2.legend()
+    ax2.set_xlabel(feature_names[0], fontsize=11)
+    ax2.set_ylabel(feature_names[1], fontsize=11)
+    ax2.set_title(f'K-Means (K={optimal_k}, 轮廓系数={sil_kmeans:.4f})',
+                  fontsize=12, fontweight='bold')
+    ax2.legend(fontsize=8, ncol=2)
     ax2.grid(True, alpha=0.3)
 
-    # 图3: GMM结果
-    ax3 = axes[1, 0]
-    for i in range(optimal_k):
-        mask = gmm_labels == i
-        ax3.scatter(X[mask, 0], X[mask, 1], c=colors[i], s=60, alpha=0.6,
+    # 图3: GMM with BIC推荐组件数（新增）
+    ax3 = axes[0, 2]
+    gmm_bic_info = gmm_models['BIC']
+    colors_bic = get_colors(gmm_bic_info['n_components'])
+    sil_bic = eval_results['GMM(BIC)']['silhouette']
+    for i in range(gmm_bic_info['n_components']):
+        mask = gmm_bic_info['labels'] == i
+        ax3.scatter(X[mask, 0], X[mask, 1], c=[colors_bic[i]], s=60, alpha=0.6,
                    edgecolors='white', linewidth=0.5, label=f'簇 {i}')
-    ax3.set_xlabel(feature_names[0])
-    ax3.set_ylabel(feature_names[1])
-    ax3.set_title(f'GMM (轮廓系数={sil_gmm:.4f})', fontweight='bold')
-    ax3.legend()
+    ax3.set_xlabel(feature_names[0], fontsize=11)
+    ax3.set_ylabel(feature_names[1], fontsize=11)
+    ax3.set_title(f'GMM with BIC (n={best_n_bic}, 轮廓系数={sil_bic:.4f})',
+                  fontsize=12, fontweight='bold')
+    ax3.legend(fontsize=8, ncol=2)
     ax3.grid(True, alpha=0.3)
 
-    # 图4: GMM概率不确定性
-    # 用最大概率的值来表示确定性，颜色深浅表示分配的确定程度
-    ax4 = axes[1, 1]
-    max_proba = gmm_proba.max(axis=1)  # 每个点最大概率
-    scatter = ax4.scatter(X[:, 0], X[:, 1], c=max_proba, cmap='RdYlGn',
-                         s=60, alpha=0.8, edgecolors='white', linewidth=0.5)
-    plt.colorbar(scatter, ax=ax4, label='最大归属概率')
-    ax4.set_xlabel(feature_names[0])
-    ax4.set_ylabel(feature_names[1])
-    ax4.set_title('GMM 分配确定性（绿色=高确定性）', fontweight='bold')
+    # ========== 第二行 ==========
+
+    # 图4: GMM with AIC推荐组件数（新增）
+    ax4 = axes[1, 0]
+    gmm_aic_info = gmm_models['AIC']
+    colors_aic = get_colors(gmm_aic_info['n_components'])
+    sil_aic = eval_results['GMM(AIC)']['silhouette']
+    for i in range(gmm_aic_info['n_components']):
+        mask = gmm_aic_info['labels'] == i
+        ax4.scatter(X[mask, 0], X[mask, 1], c=[colors_aic[i]], s=60, alpha=0.6,
+                   edgecolors='white', linewidth=0.5, label=f'簇 {i}')
+    ax4.set_xlabel(feature_names[0], fontsize=11)
+    ax4.set_ylabel(feature_names[1], fontsize=11)
+    ax4.set_title(f'GMM with AIC (n={best_n_aic}, 轮廓系数={sil_aic:.4f})',
+                  fontsize=12, fontweight='bold')
+    ax4.legend(fontsize=8, ncol=2)
     ax4.grid(True, alpha=0.3)
 
+    # 图5: GMM with K-Means对齐K（原图3）
+    ax5 = axes[1, 1]
+    gmm_k_info = gmm_models['K-Means']
+    colors_k = get_colors(gmm_k_info['n_components'])
+    for i in range(gmm_k_info['n_components']):
+        mask = gmm_k_info['labels'] == i
+        ax5.scatter(X[mask, 0], X[mask, 1], c=[colors_k[i]], s=60, alpha=0.6,
+                   edgecolors='white', linewidth=0.5, label=f'簇 {i}')
+    ax5.set_xlabel(feature_names[0], fontsize=11)
+    ax5.set_ylabel(feature_names[1], fontsize=11)
+    ax5.set_title(f'GMM with K={optimal_k} (轮廓系数={sil_gmm:.4f})',
+                  fontsize=12, fontweight='bold')
+    ax5.legend(fontsize=8, ncol=2)
+    ax5.grid(True, alpha=0.3)
+
+    # 图6: 三个GMM模型的评估指标对比（新增）
+    ax6 = axes[1, 2]
+    gmm_names = ['GMM(BIC)', 'GMM(AIC)', 'GMM(K-Means)']
+    gmm_silhouettes = [eval_results[name]['silhouette'] for name in gmm_names]
+    gmm_n_components = [eval_results[name]['n_components'] for name in gmm_names]
+
+    x_pos = np.arange(len(gmm_names))
+    bars = ax6.bar(x_pos, gmm_silhouettes, color=['#e74c3c', '#3498db', '#2ecc71'],
+                   alpha=0.7, edgecolor='white', linewidth=2)
+    ax6.set_xticks(x_pos)
+    ax6.set_xticklabels([f'{name}\n(n={n})' for name, n in zip(gmm_names, gmm_n_components)],
+                        fontsize=9)
+    ax6.set_ylabel('轮廓系数', fontsize=11)
+    ax6.set_title('GMM模型评估对比', fontsize=12, fontweight='bold')
+    ax6.grid(True, alpha=0.3, axis='y')
+
+    # 在柱子上标注数值
+    for bar, score in zip(bars, gmm_silhouettes):
+        height = bar.get_height()
+        ax6.text(bar.get_x() + bar.get_width()/2., height,
+                f'{score:.4f}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+
     plt.tight_layout()
-    plt.savefig('output/05_gmm_vs_kmeans.png', dpi=150, bbox_inches='tight')
+    plt.savefig('output/05_gmm_bic_aic_comparison.png', dpi=150, bbox_inches='tight')
     plt.show()
 
-    print("\n  ✅ 图表已保存: output/05_gmm_vs_kmeans.png")
+    print("\n  ✅ 图表已保存: output/05_gmm_bic_aic_comparison.png")
 
-    # ----- 5. 展示软分配示例 -----
-    print("\n【4. GMM软分配示例（前5个样本）】")
+    # ----- 5. BIC/AIC 实战对比总结 -----
+    print("\n【5. BIC/AIC 推荐值实战对比总结】")
+    print("=" * 80)
+
+    print(f"\n  📊 三个GMM模型的对比：")
+    print(f"     • GMM(BIC) - 组件数={best_n_bic}，轮廓系数={sil_bic:.4f}")
+    print(f"     • GMM(AIC) - 组件数={best_n_aic}，轮廓系数={sil_aic:.4f}")
+    print(f"     • GMM(K={optimal_k}) - 组件数={optimal_k}，轮廓系数={sil_gmm:.4f}")
+
+    print(f"\n  💡 观察与结论：")
+    if best_n_bic < best_n_aic:
+        print(f"     • BIC更保守：推荐{best_n_bic}个组件（更简单的模型）")
+        print(f"     • AIC更激进：推荐{best_n_aic}个组件（更复杂的模型）")
+    elif best_n_bic == best_n_aic:
+        print(f"     • BIC和AIC一致：都推荐{best_n_bic}个组件")
+    else:
+        print(f"     • 特殊情况：BIC推荐{best_n_bic}个组件，AIC推荐{best_n_aic}个组件")
+
+    print(f"\n     • 实际应用建议：")
+    print(f"       - 如果追求模型简洁性和可解释性，选择BIC推荐值")
+    print(f"       - 如果追求拟合精度，选择AIC推荐值")
+    print(f"       - 如果需要与其他算法对比，使用K-Means对齐的K值")
+    print(f"       - 本项目选择K={optimal_k}是为了与K-Means公平对比")
+
+    # ----- 6. 展示软分配示例（使用 K-Means对齐的GMM） -----
+    print("\n【6. GMM软分配示例（前5个样本，使用K={optimal_k}的GMM）】")
     print("  每个样本属于各簇的概率:")
+
+    max_proba = gmm_proba.max(axis=1)  # 计算最大概率
     proba_df = pd.DataFrame(gmm_proba[:5],
                            columns=[f'簇{i}' for i in range(optimal_k)])
     proba_df['最大概率簇'] = gmm_labels[:5]
     proba_df['确定性'] = max_proba[:5]
     print(proba_df.to_string(index=False))
+
+    print("\n  💡 软分配优势：GMM给出概率分布，而K-Means只给出硬分配")
 
     return gmm, gmm_labels
 
@@ -1075,11 +1261,11 @@ def predict_new_customer(annual_income, spending_score, model_dir="models"):
 
     使用方法：
     --------
-    >>> cluster, cluster_name, proba = predict_new_customer(
-    ...     annual_income=75,      # 年收入 75k$
-    ...     spending_score=60      # 消费评分 60
-    ... )
-    >>> print(f"客户分群: {cluster_name}")
+    cluster, cluster_name, proba = predict_new_customer(
+    annual_income=75,      # 年收入 75k$
+    spending_score=60      # 消费评分 60
+    )
+    print(f"客户分群: {cluster_name}")
 
     Parameters:
     -----------
