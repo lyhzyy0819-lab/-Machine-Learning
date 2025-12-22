@@ -14,6 +14,8 @@
 
 ## 📂 项目结构
 
+/Users/lyh/.claude/plans
+
 ```
 Machine Learning/
 │
